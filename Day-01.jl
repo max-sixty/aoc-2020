@@ -201,7 +201,7 @@ input_str = "2008
 1517
 1175"
 
-numbers = sort!([parse(Int, n) for n in split(input, "\n")])
+numbers = sort!([parse(Int, n) for n in split(input_str, "\n")])
 numbers
 
 # Part 1
