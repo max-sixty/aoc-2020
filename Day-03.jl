@@ -11,31 +11,21 @@ A = falses(height, width)
 # Can we do this with an iterator? It's somewhat awkward to 
 # define a fixed-sized array and then iterate over both
 # dimensions.
-for i = 1:height
-    line = lines[i]
-    for j = 1:width
-        bo = parse_to_bool(line[j])
-        A[i, j] = bo
-    end
+for i = 1:height, j = 1:width
+    A[i, j] = parse_to_bool(lines[i][j])
 end
 
 function count_trees(array, x_step, y_step)
     ts = 0
 
-    # Is there an indexer object?
-    loc = (1, 1)
-    while true
-        ts += array[loc...]
-        y, x = loc
-        # What's a better way to do the mod of a 1-indexed number?
-        x = x - 1
-        x = mod(x + x_step, width)
-        x = x + 1
-        y += y_step
-        if y > height
-            break
-        end
-        loc = (y, x)
+    # In retrospect, probably not worth using the CartesianIndex; tuple would
+    # have been fine
+
+    loc = CartesianIndex(1, 1)
+
+    while loc[1] <= height
+        ts += array[loc]
+        loc = CartesianIndex(loc[1] + y_step, mod1(loc[2] + x_step, width))
     end
     ts
 end
