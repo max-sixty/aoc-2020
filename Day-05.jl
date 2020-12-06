@@ -18,13 +18,6 @@ ids = seat_id.(passes) |> sort
 
 println(maximum(ids))
 
-function get_my_seat()
-    for i = minimum(ids):maximum(ids)
-        if (i - 1 in ids && i + 1 in ids && !(i in ids))
-            return i
-        end
-    end
-end
+my_seat(ids) = ids[findfirst(==(2), diff(ids))] + 1
 
-println(get_my_seat())
-
+println(my_seat(ids))
