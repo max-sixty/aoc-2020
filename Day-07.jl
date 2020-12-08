@@ -5,7 +5,7 @@ function to_parsed(line)
 
     # We could probably avoid this special case — have no tail_str?
     if occursin("no other", tails_str)
-        return (; bag, contents = Array[])
+        return Pair(bag, Array[])
     end
 
     contents_pairs = map(split(tails_str, r",")) do tail_str
@@ -13,10 +13,10 @@ function to_parsed(line)
         Pair(b, parse(Int, n))
     end
 
-    return (; bag, contents = Dict(contents_pairs))
+    return Pair(bag, Dict(contents_pairs))
 end
 
-entries = Dict(e.bag => e.contents for e in to_parsed.(str))
+entries = Dict(to_parsed.(str))
 
 our_bag = "shiny gold"
 
