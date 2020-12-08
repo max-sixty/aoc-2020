@@ -9,7 +9,7 @@ end
 function run1()
     ptr = 1
     acc = 0
-    history = []
+    history = Set()
     while true
         current = instructions[ptr]
         if ptr in history
@@ -32,7 +32,7 @@ println(run1())
 function run2(instructions)
     ptr = 1
     acc = 0
-    history = []
+    history = Set()
     while true
         if ptr == length(instructions) + 1
             return acc
