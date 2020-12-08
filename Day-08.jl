@@ -6,41 +6,19 @@ instructions = map(str) do x
     (; op, n = parse(Int, num))
 end
 
-function run1()
-    ptr = 1
-    acc = 0
-    history = Set()
-    while true
-        current = instructions[ptr]
-        if ptr in history
-            return acc
-        end
-        push!(history, ptr)
-        if current.op == "nop"
-            ptr += 1
-        elseif current.op == "acc"
-            acc += current.n
-            ptr += 1
-        elseif current.op == "jmp"
-            ptr += current.n
-        end
-    end
-end
+@enum Exit cycle complete
 
-println(run1())
-
-function run2(instructions)
+function run(instructions)
     ptr = 1
     acc = 0
     history = Set()
     while true
         if ptr == length(instructions) + 1
-            return acc
+            return complete, acc
+        elseif ptr in history
+            return cycle, acc
         end
         current = instructions[ptr]
-        if ptr in history
-            return nothing
-        end
         push!(history, ptr)
         if current.op == "nop"
             ptr += 1
@@ -53,21 +31,28 @@ function run2(instructions)
     end
 end
 
-function find2()
+function part1()
+    _, acc = run(instructions)
+    acc
+end
+
+function part2()
     for i = 1:length(instructions)
         inst = instructions[i]
         instructions_ = copy(instructions)
 
         if inst.op == "nop"
-            instructions_[i] = (; op = "jmp", n = inst.n)
+            instructions_[i] = (op = "jmp", n = inst.n)
         elseif inst.op == "jmp"
-            instructions_[i] = (; op = "nop", n = inst.n)
+            instructions_[i] = (op = "nop", n = inst.n)
         end
-        result = run2(instructions_)
-        if !isnothing(result)
-            return result
+        exit, acc = run(instructions_)
+        if exit == complete
+            return acc
         end
     end
 end
 
-println(find2())
+println(part1())
+
+println(part2())
