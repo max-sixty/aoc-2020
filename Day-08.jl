@@ -3,7 +3,7 @@ str = (read(open("Day-08.txt"), String) |> strip |> x -> split(x, "\n"))
 
 instructions = map(str) do x
     op, num = split(x, " ")
-    (; op, n = parse(Int, num))
+    (; op = Symbol(op), n = parse(Int, num))
 end
 
 @enum Exit cycle complete
@@ -13,19 +13,16 @@ function run(instructions)
     acc = 0
     history = Set()
     while true
-        if ptr == length(instructions) + 1
-            return complete, acc
-        elseif ptr in history
-            return cycle, acc
-        end
-        current = instructions[ptr]
+        ptr == length(instructions) + 1 && return complete, acc
+        ptr in history && return cycle, acc
         push!(history, ptr)
-        if current.op == "nop"
+        current = instructions[ptr]
+        if current.op == :nop
             ptr += 1
-        elseif current.op == "acc"
+        elseif current.op == :acc
             acc += current.n
             ptr += 1
-        elseif current.op == "jmp"
+        elseif current.op == :jmp
             ptr += current.n
         end
     end
@@ -37,19 +34,17 @@ function part1()
 end
 
 function part2()
-    for i = 1:length(instructions)
+    for i in eachindex(instructions)
         inst = instructions[i]
         instructions_ = copy(instructions)
 
-        if inst.op == "nop"
-            instructions_[i] = (op = "jmp", n = inst.n)
-        elseif inst.op == "jmp"
-            instructions_[i] = (op = "nop", n = inst.n)
+        if inst.op == :nop
+            instructions_[i] = (op = :jmp, n = inst.n)
+        elseif inst.op == :jmp
+            instructions_[i] = (op = :nop, n = inst.n)
         end
         exit, acc = run(instructions_)
-        if exit == complete
-            return acc
-        end
+        exit == complete && return acc
     end
 end
 
