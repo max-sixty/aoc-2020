@@ -3,20 +3,12 @@ str = read(open("Day-09.txt"), String)
 
 numbers = str |> strip |> split .|> x -> parse(Int, x)
 
-function is_in_preamble(n, preamble)
-    for m in preamble
-        remainder = n - m
-        remainder in preamble && return true
-    end
-    return false
-end
-
 function part1(numbers, len)
     # I've seen this be done elegantly if inefficiently with combinatorics.
     for i = (len+1):length(numbers)
         n = numbers[i]
         preamble = numbers[(i-len):(i-1)]
-        is_in_preamble(n, preamble) || return n
+        preamble .|> (m -> (n - m) in preamble) |> any || return n
     end
 end
 
