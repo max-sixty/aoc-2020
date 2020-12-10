@@ -5,15 +5,15 @@ function to_parsed(line)
 
     # We could probably avoid this special case — have no tail_str?
     if occursin("no other", tails_str)
-        return Pair(bag, Array[])
+        return bag, Array[]
     end
 
     contents_pairs = map(split(tails_str, r",")) do tail_str
         n, b = match(r"[\s]*(\d+) ([\w\s]*)[\s]bag", tail_str).captures
-        Pair(b, parse(Int, n))
+        b, parse(Int, n)
     end
 
-    return Pair(bag, Dict(contents_pairs))
+    return bag, Dict(contents_pairs)
 end
 
 entries = Dict(to_parsed.(str))
