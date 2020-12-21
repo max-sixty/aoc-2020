@@ -9,8 +9,8 @@ foods = map(split(input, "\n")) do l
     (; food, allergen)
 end
 
-all_foods = @_ foods .|> _.food |> flatten |> collect |> countmap
-all_allergens = @_ foods .|> _.allergen |> flatten |> collect |> countmap
+all_foods = @_ foods .|> _.food |> flatten |> countmap
+all_allergens = @_ foods .|> _.allergen |> flatten |> countmap
 
 shortlists = map(all_allergens |> keys |> collect) do a
     allergen_matching = [f for f in foods if a in f.allergen]
@@ -23,10 +23,9 @@ function to_food_allergen_map(shortlists)
     shortlists = deepcopy(shortlists)
 
     while length(shortlists) > 0
-        allergen, only_option =
-            first((k, only(v)) for (k, v) in shortlists if length(v) == 1)
+        allergen = @_ filter(length(_[2]) == 1, shortlists) |> first |> __[1]
 
-        pop!(shortlists, allergen)
+        only_option = pop!(shortlists, allergen) |> only
         result[allergen] = only_option
         filter!.(!=(only_option), values(shortlists))
     end
@@ -34,7 +33,7 @@ function to_food_allergen_map(shortlists)
 end
 
 mapping = to_food_allergen_map(shortlists)
-potential_contain_allergens = shortlists |> values |> flatten |> collect |> unique
+potential_contain_allergens = shortlists |> values |> flatten |> unique
 cannot_contain = @_ all_foods |> keys |> setdiff(__, potential_contain_allergens)
 
 part_1 = sum(c for (f, c) in all_foods if f in cannot_contain)
