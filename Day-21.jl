@@ -20,15 +20,14 @@ end |> Dict
 potential_contain_allergens = shortlists |> values |> flatten |> unique
 cannot_contain = @_ ingredients_count |> keys |> setdiff(__, potential_contain_allergens)
 
-part_1 = sum(c for (f, c) in ingredients_count if f in cannot_contain)
-println(part_1)
+part_1 = sum(c for (f, c) in ingredients_count if f in cannot_contain) |> println
 
 function to_map(shortlists)
     result = Dict()
     shortlists = copy(shortlists)
 
     while length(shortlists) > 0
-        allergen = @_ filter(length(_[2]) == 1, shortlists) |> first |> __[1]
+        allergen = @_ filter((_ |> last |> length) == 1, shortlists) |> first |> first
 
         only_option = pop!(shortlists, allergen) |> only
         result[allergen] = only_option
@@ -38,6 +37,10 @@ function to_map(shortlists)
 end
 
 mapping = to_map(shortlists)
-part_2 = @_ mapping |> collect |> sort(__, by = _[1]) |> map(_[2], __) |> join(__, ",")
+part_2 = @_ mapping |>
+   collect |>
+   sort(__, by = first) |>
+   map(last, __) |>
+   join(__, ",") |>
+   println
 
-println(part_2)
