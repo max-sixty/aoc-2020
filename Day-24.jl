@@ -1,25 +1,12 @@
 
 using Underscores, StatsBase, Base.Iterators
+using Hexagons
 
 input = read(open("Day-24.txt"), String) |> strip
 
-import Hexagons
+to_directions(line) = @_ eachmatch(r"(?<!s)e|se|sw|(?<!s)w|nw|ne", line) .|> _.match
 
-directions = map(split(input, "\n")) do d
-    i = 1
-    ds = []
-    while i <= length(d)
-        if d[i] in ['s', 'n']
-            push!(ds, d[i:i+1])
-            i += 2
-        else
-            push!(ds, d[i:i])
-            i += 1
-        end
-    end
-    ds
-end
-
+directions = to_directions.(split(input, "\n"))
 direction_map = zip(["ne", "e", "se", "sw", "w", "nw"], 1:6) |> Dict
 
 function to_destinations(moves)
@@ -38,7 +25,6 @@ black_tiles =
 part_1 = black_tiles |> length |> println
 
 all_neighbors(tiles) = Hexagons.neighbors.(tiles) |> flatten |> unique
-
 to_neighbor_count(tile, black_tiles) =
     @_ Hexagons.neighbors(tile) .|> (_ in black_tiles) |> count
 
